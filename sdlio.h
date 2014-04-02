@@ -5,7 +5,10 @@
 #ifndef _SDLIO_H
 #define _SDLIO_H
 
-#include <SDL/SDL.h>
+#include <GL/glew.h>
+#define GLFW_DLL
+#include <GLFW/glfw3.h>
+
 #include "config.h"
 #include "cellvm.h"
 
