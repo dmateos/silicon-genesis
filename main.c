@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 
     /* Show title untill enter is pressed. */
     print_help();
-    display_title(screen);
+//    display_title(screen);
 
     do {
         draw_all(screen, &cluster, DRAW_BLANK);

@@ -34,6 +34,7 @@ inline static void display_update(SDL_Surface *screen, int x, int y, int R, int 
         SDL_UpdateRect(screen, x*PIXELSPEROBJECT, y*PIXELSPEROBJECT, PIXELSPEROBJECT, PIXELSPEROBJECT);
 }
 
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
 int sdl_input(SDL_Surface *screen, struct cell_cluster *cluster) {
     SDL_Event event;
 
@@ -88,66 +89,46 @@ int sdl_input(SDL_Surface *screen, struct cell_cluster *cluster) {
     return 0;
 }
 
-SDL_Surface *display_init(void) {
-    SDL_Surface *screen;
+GLFWwindow *display_init(void) {
+    GLFWwindow *window;
 
-    /* SDL library init. */
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if(!glfwInit()) {
         printf("Video init error %s\n", SDL_GetError());
         return NULL;
     }
-    /* Create a screen. */
-    else if (!(screen = SDL_SetVideoMode(X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT, 16, SDL_SWSURFACE))) {
+    else if (!(window = glfwCreateWindow(X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT, "sg", NULL, NULL))) {
         printf("Video mode set error %s\n", SDL_GetError());
-        SDL_Quit();
         return NULL;
     }
 
-    SDL_WM_SetCaption("Silicon Genesis", "Silicon Genesis");
+    glfwSetKeyCallback(window, key_callback);
+    glfwMakeContextCurrent(window);
+
+    glewExperimental = GL_TRUE;
+    glewInit();
+
+    glEnable(GL_TEXTURE_2D);
+    glClearDepth(1.0);
+    glDepthFunct(GL_LEQUAL);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT, 0.0, -1.0, 1.0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glViewport(0, 0, X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT);
+
     display_call = draw_local_gmap; /* Set display call to generations by default. */
 
 #ifdef DEBUG
     printf("Display init ok: %dx%d @ %d^2\n", X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT, PIXELSPEROBJECT);
 #endif
-    return screen;
+    return window;
 }
 
 void display_close(void) {
-    SDL_Quit();
-    printf("Display closed\n");
-}
-
-int display_title(SDL_Surface *screen) {
-    SDL_Surface *bitmap, *converted;
-    SDL_Rect dest, src;
-
-    if (!(bitmap = SDL_LoadBMP(STARTLOGO))) {
-        printf("logo load error\n");
-        return -1;
-    }
-
-    /* Convert loaded bitmap into our display format. */
-    converted = SDL_DisplayFormat(bitmap);
-    SDL_FreeSurface(bitmap);
-
-    src.x = 0;
-    src.y = 0;
-    src.w = converted->w;
-    src.h = converted->h;
-
-    /* TODO: possibly check these dount go out of bounds when not so baked. */
-    dest.x = ((X*PIXELSPEROBJECT)/2)-(src.w/2);
-    dest.y = ((Y*PIXELSPEROBJECT)/2)-(src.h/2);
-
-    /* Display it for awhile then free it. */
-    SDL_BlitSurface(converted, &src, screen, &dest);
-    SDL_UpdateRect(screen, 0, 0, X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT);
-    /* TODO: This crashes if sdl_input uses one of the null params. */
-    while (sdl_input(NULL, NULL) != SDLK_RETURN)
-        SDL_Delay(100);
-
-    SDL_FreeSurface(converted);
-    return 0;
+  glfwTerminate();
 }
 
 void draw_all(SDL_Surface *screen, const struct cell_cluster *cluster, enum DISPLAY_TYPE type) {
