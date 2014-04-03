@@ -20,88 +20,62 @@ duptr display_call;
  * @param B Blue color value.
  * @param flush Update the display now if true.
  */
-inline static void display_update(SDL_Surface *screen, int x, int y, int R, int G, int B, int flush) {
-    SDL_Rect pixel;
-    int color = SDL_MapRGB(screen->format, R, G, B);
+inline static void display_update(int x, int y, float R, float G, float B) {
+    glColor3f(R,G,B);
 
-    pixel.x = x * PIXELSPEROBJECT;
-    pixel.y = y * PIXELSPEROBJECT;
-    pixel.w = PIXELSPEROBJECT;
-    pixel.h = PIXELSPEROBJECT;
+    int xmod = x * PIXELSPEROBJECT;
+    int ymod = y * PIXELSPEROBJECT;
 
-    SDL_FillRect(screen, &pixel, color);
-    if (flush)
-        SDL_UpdateRect(screen, x*PIXELSPEROBJECT, y*PIXELSPEROBJECT, PIXELSPEROBJECT, PIXELSPEROBJECT);
+    glBegin(GL_QUADS);
+    glVertex3f(xmod, ymod, 0);
+    glVertex3f(xmod+PIXELSPEROBJECT, ymod, 0);
+    glVertex3f(xmod+PIXELSPEROBJECT, ymod+PIXELSPEROBJECT, 0);
+    glVertex3f(xmod, ymod+PIXELSPEROBJECT, 0);
+
+    glEnd();
 }
 
+/*
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-int sdl_input(SDL_Surface *screen, struct cell_cluster *cluster) {
-    SDL_Event event;
-
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-            exit(0);
-            /* Catch some key presses. */
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
-            case SDLK_RETURN:
-                return SDLK_RETURN;
-            /* Generation view. */
-            case SDLK_g:
-                printf("Display generation request\n");
-                draw_all(screen, cluster, DRAW_GENERATION);
-                display_call = draw_local_generation;
-                return SDLK_g;
-            /* Energy view. */
-            case SDLK_e:
-                printf("Display energy request\n");
-                draw_all(screen, cluster, DRAW_ENERGY);
-                display_call = draw_local_energy;
-                return SDLK_e;
-            /* Living view. */
-            case SDLK_l:
-                printf("Display living request\n");
-                draw_all(screen, cluster, DRAW_LIVING);
-                display_call = draw_local_living;
-                return SDLK_l;
-            /* Genmap view. */
-            case SDLK_m:
-                printf("Display genmap request\n");
-                draw_all(screen, cluster, DRAW_GENMAP);
-                display_call = draw_local_gmap;
-                return SDLK_m;
-            /* Restart sim. */
-            case SDLK_r:
-                printf("Restart sim request\n");
-                /* Do some stuff */
-                cluster->sched_end = 1;
-                return SDLK_r;
-            case SDLK_q:
-                exit(0);
-            default:
-                break;
-            }
-        default:
-            break;
-        }
-    }
-    return 0;
+  switch(key) {
+    case GLFW_KEY_G:
+      printf("display generation request\n");
+      draw_all(cluster, DRAW_GENERATION);
+      display_call = draw_local_generation;
+    case GLFW_KEY_E:
+      printf("display energy request\n");
+      draw_all(cluster, DRAW_ENERGY);
+      display_call = draw_local_generation;
+      break;
+    case GLFW_KEY_L:
+      printf("display living request\n");
+      draw_all(cluster, DRAW_LIVING);
+      display_call = draw_local_living;
+      break;
+    case GLFW_KEY_M:
+      printf("display genmap request\n");
+      draw_all(cluster, DRAW_GENMAP);
+      display_call = draw_local_gmap;
+    case GLFW_KEY_R:
+      cluster->sched_end = 1;
+      break;
+    case GLFW_KEY_Q:
+      exit(0);
+  }
 }
+*/
 
 GLFWwindow *display_init(void) {
     GLFWwindow *window;
 
     if(!glfwInit()) {
-        printf("Video init error %s\n", SDL_GetError());
         return NULL;
     }
     else if (!(window = glfwCreateWindow(X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT, "sg", NULL, NULL))) {
-        printf("Video mode set error %s\n", SDL_GetError());
         return NULL;
     }
 
-    glfwSetKeyCallback(window, key_callback);
+//    glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
 
     glewExperimental = GL_TRUE;
@@ -109,7 +83,7 @@ GLFWwindow *display_init(void) {
 
     glEnable(GL_TEXTURE_2D);
     glClearDepth(1.0);
-    glDepthFunct(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT, 0.0, -1.0, 1.0);
@@ -131,7 +105,7 @@ void display_close(void) {
   glfwTerminate();
 }
 
-void draw_all(SDL_Surface *screen, const struct cell_cluster *cluster, enum DISPLAY_TYPE type) {
+void draw_all( const struct cell_cluster *cluster, enum DISPLAY_TYPE type) {
     int x, y;
 
     for (x = 0; x < X; x++) {
@@ -139,54 +113,51 @@ void draw_all(SDL_Surface *screen, const struct cell_cluster *cluster, enum DISP
             /* What are we going to blanket update the screen with?. */
             switch (type) {
             case DRAW_ENERGY:
-                draw_local_energy(screen, cluster, x, y, 0, 0);
+                draw_local_energy(cluster, x, y, 0, 0);
                 break;
             case DRAW_GENERATION:
-                draw_local_generation(screen, cluster, x, y, 0, 0);
+                draw_local_generation(cluster, x, y, 0, 0);
                 break;
             case DRAW_LIVING:
-                draw_local_living(screen, cluster, x, y, 0, 0);
+                draw_local_living(cluster, x, y, 0, 0);
                 break;
             case DRAW_GENMAP:
-                draw_local_gmap(screen, cluster, x, y, 0 , 0);
+                draw_local_gmap(cluster, x, y, 0 , 0);
                 break;
             case DRAW_BLANK:
-                display_update(screen, x, y, 0, 0, 0, 0);
+                display_update(x, y, 0, 0, 0);
                 break;
             default:
                 break;
             }
         }
     }
-    /* Update the whole screen at once since we didnt call the draw with a
-     * buffer flush for efficiency. */
-    SDL_UpdateRect(screen, 0, 0, X*PIXELSPEROBJECT, Y*PIXELSPEROBJECT);
 }
 
-void draw_local_energy(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
+void draw_local_energy(const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
     int i, xptr, yptr;
     struct cell_proc *proc;
 
     proc = cluster->cells[x][y];
 
     if (proc->energy < 256)
-        display_update(screen, x, y, proc->energy, 0, 0, render);
+        display_update(x, y, proc->energy, 0, 0);
     else if (proc->energy < 512)
-        display_update(screen, x, y, 255, proc->energy, 0, render);
+        display_update(x, y, 255, proc->energy, 0);
     else if (proc->energy < 768)
-        display_update(screen, x, y, 255, 255, proc->energy, render);
+        display_update(x, y, 255, 255, proc->energy);
     else
-        display_update(screen, x, y, 255, 255, 255, render);
+        display_update(x, y, 255, 255, 255);
 
     if (neighbours) {
         for (i = LEFT; i <= DOWN; i++) {
             get_neighbour_coords(x, y, i, &xptr, &yptr);
-            draw_local_energy(screen, cluster, xptr, yptr, 0, render);
+            draw_local_energy(cluster, xptr, yptr, 0, render);
         }
     }
 }
 
-void draw_local_generation(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
+void draw_local_generation(const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
     int i, xptr, yptr;
     struct cell_proc *proc;
 
@@ -194,23 +165,23 @@ void draw_local_generation(SDL_Surface *screen, const struct cell_cluster *clust
 
     /* Attempt to fit more colours in by stepping thru the R,G,B scale, very bad way to do this. */
     if (proc->gen < 256)
-        display_update(screen, x, y, 0, proc->gen, 0, render);
+        display_update(x, y, 0, proc->gen, 0);
     else if (proc->gen < 512)
-        display_update(screen, x, y, 0, 255, proc->gen, render);
+        display_update(x, y, 0, 255, proc->gen);
     else if (proc->gen < 768)
-        display_update(screen, x, y, proc->gen, 255, 255, render);
+        display_update(x, y, proc->gen, 255, 255);
     else
         printf("color overflow -fix me- ....%ld\n", proc->gen);
 
     if (neighbours) {
         for (i = LEFT; i <= DOWN; i++) {
             get_neighbour_coords(x, y, i, &xptr, &yptr);
-            draw_local_generation(screen, cluster, xptr, yptr, 0, render);
+            draw_local_generation(cluster, xptr, yptr, 0, render);
         }
     }
 }
 
-void draw_local_living(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
+void draw_local_living(const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
     int i, xptr, yptr;
     struct cell_proc *ptr;
 
@@ -218,9 +189,9 @@ void draw_local_living(SDL_Surface *screen, const struct cell_cluster *cluster, 
 
     /* Update the current pixel. */
     if (ptr->energy > 0)
-        display_update(screen, x, y, 0, 0, 255, render);
+        display_update(x, y, 0, 0, 255);
     else
-        display_update(screen, x, y, 0, 0, 0, render);
+        display_update(x, y, 0, 0, 0);
 
     if (neighbours) {
         /* And its neighbours. */
@@ -228,12 +199,12 @@ void draw_local_living(SDL_Surface *screen, const struct cell_cluster *cluster, 
             /* Get the direction coords for the neighbour with a cellvm helper call and
              * recursivly call this function to update each neighbour. */
             get_neighbour_coords(x, y, i, &xptr, &yptr);
-            draw_local_living(screen, cluster, xptr, yptr, 0, render);
+            draw_local_living(cluster, xptr, yptr, 0, render);
         }
     }
 }
 
-void draw_local_gmap(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
+void draw_local_gmap(const struct cell_cluster *cluster, int x, int y, char neighbours, char render) {
     int i, xptr, yptr, color;
     struct cell_proc *proc;
 
@@ -252,12 +223,12 @@ void draw_local_gmap(SDL_Surface *screen, const struct cell_cluster *cluster, in
 
     /* the << shifts for the R,G,B channels give the output a little colour
      * rather than bland grey scale images. */
-    display_update(screen, x, y, color<<1, color<<2, color<<4, render);
+    display_update(x, y, color<<1, color<<2, color<<4);
 
     if (neighbours) {
         for (i = LEFT; i <= DOWN; i++) {
             get_neighbour_coords(x, y, i, &xptr, &yptr);
-            draw_local_gmap(screen, cluster, xptr, yptr, 0, render);
+            draw_local_gmap(cluster, xptr, yptr, 0, render);
         }
     }
 }

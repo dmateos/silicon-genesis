@@ -13,7 +13,7 @@
 
 /* Global cluster and screen pointers, assigned by main(). */
 struct cell_cluster *cp;
-SDL_Surface *sp;
+GLFWwindow *sp;
 
 /**
  * Print program usage information to console.
@@ -51,14 +51,8 @@ static void handle_exit(void) {
  */
 static void callback_update(int x, int y, char didstuff) {
     if (didstuff)
-        display_call(sp, cp, x, y, 1, 1);
-}
-
-/**
- * Wrapper for the sdl_input function that adhears to the
- * callback interface. */
-static void callback_sdlinput(int x, int y, char didstuff) {
-    sdl_input(sp, cp);
+        display_call(cp, x, y, 1, 1);
+    glfwSwapBuffers(sp);
 }
 
 /**
@@ -66,7 +60,7 @@ static void callback_sdlinput(int x, int y, char didstuff) {
  */
 int main(int argc, char *argv[]) {
     struct cell_cluster cluster;
-    SDL_Surface *screen;
+    GLFWwindow *screen;
     int i;
 
     /* Test instructions, they do what they are called... */
@@ -89,7 +83,6 @@ int main(int argc, char *argv[]) {
     sp = screen;
     srand(time(NULL));
 
-    add_callback(&cluster.callbacks, callback_sdlinput, 100, "SDL_INPUT_COLLECT");
     add_callback(&cluster.callbacks, callback_update, 1, "SDL_GUI_UPDATE");
 
     /* Show title untill enter is pressed. */
@@ -97,7 +90,7 @@ int main(int argc, char *argv[]) {
 //    display_title(screen);
 
     do {
-        draw_all(screen, &cluster, DRAW_BLANK);
+        draw_all(&cluster, DRAW_BLANK);
 
         /* Populate random spots with some test cells and run the scheduler. */
 //        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, randpop);

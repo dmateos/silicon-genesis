@@ -18,7 +18,7 @@
 #define PIXELSPEROBJECT 4
 
 /** Function pointer for screen display functions. */
-typedef void(*duptr)(SDL_Surface*, const struct cell_cluster*, int x, int y, char neighbours, char render);
+typedef void(*duptr)(const struct cell_cluster*, int x, int y, char neighbours, char render);
 
 /** Display call function pointer, set by sdl_input dynamicly via user input
  *  to one of the various display drawing styles. */
@@ -34,18 +34,10 @@ enum DISPLAY_TYPE {
 };
 
 /**
- * Poll for SDL input, do stuff on key presses like update the display_call pointer.
- * @param screen Screen to collect events for. (Only used on drawing updates)
- * @param cluster Cluster to draw the drawing updates too. (Only used sometimes)
- * @return Usually the keypress found in sdl input.
- */
-int sdl_input(SDL_Surface *screen, struct cell_cluster *cluster);
-
-/**
  * Init the SDL display system.
  * @return SDL screen on success, NULL on fail.
  */
-SDL_Surface *display_init(void);
+GLFWwindow *display_init(void);
 
 /**
  * Shutdown SDL.
@@ -53,19 +45,12 @@ SDL_Surface *display_init(void);
 void display_close(void);
 
 /**
- * Display a bitmap to the screen and wait for return key.
- * @param screen Screen to draw bitmap to.
- * @return 0 on success, 1 on fail.
- */
-int display_title(SDL_Surface *screen);
-
-/**
  * Updates the whole screen with map of the data in the cluster.
  * @param screen Screen to draw updates too.
  * @param cluster Cluster to get update information from.
  * @param type Information to collect and draw from the cluster.
  */
-void draw_all(SDL_Surface *screen, const struct cell_cluster *cluster, enum DISPLAY_TYPE type);
+void draw_all(const struct cell_cluster *cluster, enum DISPLAY_TYPE type);
 
 /**
  * Updates the pixel at the specified location with energy information from the equivlent cell in the cluster.
@@ -76,7 +61,7 @@ void draw_all(SDL_Surface *screen, const struct cell_cluster *cluster, enum DISP
  * @param neighbours Update the cells around the one specified that could have been modified if true.
  * @param render Render the updates before the function exits if true.
  */
-void draw_local_energy(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
+void draw_local_energy(const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
 
 /**
  * Updates the pixel at the specified location with generation information from the equiv cell in cluster.
@@ -87,7 +72,7 @@ void draw_local_energy(SDL_Surface *screen, const struct cell_cluster *cluster, 
  * @param neighbours Update the cells around the one specified that could have been modified if true.
  * @param render Render the updates if true.
  */
-void draw_local_generation(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
+void draw_local_generation(const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
 
 /**
  * Updates the pixel at the specified location with living information from the equiv cell in cluster.
@@ -98,7 +83,7 @@ void draw_local_generation(SDL_Surface *screen, const struct cell_cluster *clust
  * @param neighbours Update the cells around the one specified that could have been modified if true.
  * @param render Render the updates now if true.
  */
-void draw_local_living(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
+void draw_local_living(const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
 
 /**
  * Updates the pixel at the specified location with genmap information from the cell specified.
@@ -109,7 +94,7 @@ void draw_local_living(SDL_Surface *screen, const struct cell_cluster *cluster, 
  * @param neighbours If set to true, updates cells neighbours too.
  * @param render Render the updates now?
  */
-void draw_local_gmap(SDL_Surface *screen, const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
+void draw_local_gmap(const struct cell_cluster *cluster, int x, int y, char neighbours, char render);
 
 #endif
 
