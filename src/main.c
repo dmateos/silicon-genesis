@@ -53,6 +53,7 @@ static void callback_update(int x, int y, char didstuff) {
     if (didstuff) {
         display_call(cp, x, y, 1, 1);
         glfwSwapBuffers(sp);
+        glfwPollEvents();
     }
 }
 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
     char randpopeat[CSIZE] = { SPOR, RDIR, CRCH, STOP };
 
     /* Init display system and cluster. */
-    if (cluster_init(&cluster) || !(screen = display_init()))
+    if (cluster_init(&cluster) || !(screen = display_init(&cluster)))
         exit(1);
     else
         atexit(handle_exit);

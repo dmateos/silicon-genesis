@@ -37,7 +37,7 @@ enum DISPLAY_TYPE {
  * Init the SDL display system.
  * @return SDL screen on success, NULL on fail.
  */
-GLFWwindow *display_init(void);
+GLFWwindow *display_init(struct cell_cluster *cluster);
 
 /**
  * Shutdown SDL.

@@ -35,26 +35,26 @@ inline static void display_update(int x, int y, float R, float G, float B) {
     glEnd();
 }
 
-/*
+struct cell_cluster *cluster;
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
   switch(key) {
     case GLFW_KEY_G:
       printf("display generation request\n");
-      draw_all(cluster, DRAW_GENERATION);
+      //draw_all(cluster, DRAW_GENERATION);
       display_call = draw_local_generation;
     case GLFW_KEY_E:
       printf("display energy request\n");
-      draw_all(cluster, DRAW_ENERGY);
+      //draw_all(cluster, DRAW_ENERGY);
       display_call = draw_local_generation;
       break;
     case GLFW_KEY_L:
       printf("display living request\n");
-      draw_all(cluster, DRAW_LIVING);
+      //draw_all(cluster, DRAW_LIVING);
       display_call = draw_local_living;
       break;
     case GLFW_KEY_M:
       printf("display genmap request\n");
-      draw_all(cluster, DRAW_GENMAP);
+      //draw_all(cluster, DRAW_GENMAP);
       display_call = draw_local_gmap;
     case GLFW_KEY_R:
       cluster->sched_end = 1;
@@ -63,10 +63,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
       exit(0);
   }
 }
-*/
 
-GLFWwindow *display_init(void) {
+GLFWwindow *display_init(struct cell_cluster *cluster) {
     GLFWwindow *window;
+    cluster = cluster;
 
     if(!glfwInit()) {
         return NULL;
@@ -75,7 +75,7 @@ GLFWwindow *display_init(void) {
         return NULL;
     }
 
-//    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
 
     glewExperimental = GL_TRUE;
