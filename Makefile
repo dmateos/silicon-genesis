@@ -1,9 +1,9 @@
 objects = \
-	main.o \
-	sdlio.o \
-	cellvmcb.o \
-	cellvm.o \
-	cellconf.o \
+	src/main.o \
+	src/sdlio.o \
+	src/cellvmcb.o \
+	src/cellvm.o \
+	src/cellconf.o \
 
 flags = -lglfw3 -lglew -lassimp -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
@@ -12,20 +12,20 @@ all: silicon-genesis
 silicon-genesis: $(objects)
 	$(CC) $(flags) -o $@ $(objects)
 
-main.o: main.c
-	$(CC) -c -o $@ main.c
+src/main.o: src/main.c
+	$(CC) -c -o $@ src/main.c
 
-stlio.o: sdlio.c
-	$(CC) -c -o $@ stlio.c
+src/stlio.o: src/sdlio.c
+	$(CC) -c -o $@ src/stlio.c
 
-cellvmcb.o: cellvmcb.c
-	$(CC) -c -o $@ cellvmcb.c
+src/cellvmcb.o: src/cellvmcb.c
+	$(CC) -c -o $@ src/cellvmcb.c
 
-cellvm.o: cellvm.c
-	$(CC) -c -o $@ cellvm.c
+src/cellvm.o: src/cellvm.c
+	$(CC) -c -o $@ src/cellvm.c
 
-cellconf.o: cellconf.c
-	$(CC) -c -o $@ cellconf.c
+src/cellconf.o: src/cellconf.c
+	$(CC) -c -o $@ src/cellconf.c
 
 clean:
-	rm -rf *.o coneway
+	rm -rf src/*.o silicon-genesis

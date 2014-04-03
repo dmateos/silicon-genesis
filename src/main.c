@@ -50,9 +50,10 @@ static void handle_exit(void) {
  * Do GUI and other SDL updates.
  */
 static void callback_update(int x, int y, char didstuff) {
-    if (didstuff)
+    if (didstuff) {
         display_call(cp, x, y, 1, 1);
-    glfwSwapBuffers(sp);
+        glfwSwapBuffers(sp);
+    }
 }
 
 /**

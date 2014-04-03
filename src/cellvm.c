@@ -173,8 +173,8 @@ static struct cell_proc *proc_cell(const struct cell_cluster *cluster, int x, in
         }
 #ifdef DEBUG
         printf("Cell stopped: iptr:0x%x/0x%x, inst:%s, stp:%d, energy:%ld\n", instptr-1, CSIZE, instrlookup[cell->instructions[instptr-1]], stop, cell->energy);
-        if (ARTIFICIAL_LIMIT > 0)
-            sleep(ARTIFICIAL_LIMIT); /* Sleep so we can see results. */
+ //       if (ARTIFICIAL_LIMIT > 0)
+//            sleep(ARTIFICIAL_LIMIT); /* Sleep so we can see results. */
 #endif
     }
     return cell;

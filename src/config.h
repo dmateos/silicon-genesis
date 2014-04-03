@@ -11,7 +11,7 @@
 
 /** Defined if debug messages/features should be enabled,
  *  be warned this slows down the simulation considerably. */
-#define DEBUG
+//#define DEBUG
 
 #define ARTIFICIAL_LIMIT 0
 
