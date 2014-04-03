@@ -95,17 +95,17 @@ int main(int argc, char *argv[]) {
         draw_all(&cluster, DRAW_BLANK);
 
         /* Populate random spots with some test cells and run the scheduler. */
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, randpop);
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popup);
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popleft);
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popright);
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popdown);
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, star);
-//        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, rightup);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, randpop);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popup);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popleft);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popright);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, popdown);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, star);
+        cell_pop(&cluster, RANDX, RANDY, 1, ENERGY, rightup);
 
         /* Populate the grid with some randomly seeded cells. */
-        for (i = 0; i < 300; i++)
-            cell_seed(&cluster, RANDX, RANDY);
+//        for (i = 0; i < 300; i++)
+//            cell_seed(&cluster, RANDX, RANDY);
 
         cluster_sched(&cluster);
 

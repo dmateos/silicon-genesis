@@ -42,10 +42,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
       printf("display generation request\n");
       //draw_all(cluster, DRAW_GENERATION);
       display_call = draw_local_generation;
+      break;
     case GLFW_KEY_E:
       printf("display energy request\n");
       //draw_all(cluster, DRAW_ENERGY);
-      display_call = draw_local_generation;
+      display_call = draw_local_energy;
       break;
     case GLFW_KEY_L:
       printf("display living request\n");
